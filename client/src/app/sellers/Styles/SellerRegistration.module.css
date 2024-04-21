@@ -1,0 +1,66 @@
+.container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  /* max-width: 500px; */
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+.container h1 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #007bff;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+  display: flex; /* Use flexbox */
+  align-items: center; /* Align items vertically */
+}
+.container label {
+  display: block;
+  /* margin-bottom: 5px; */
+  margin-right: 10px;
+}
+.container select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.container input[type="text"],
+.container input[type="email"],
+.container input[type="password"] {
+  flex: 1;
+  width: calc(100% - 110px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.container button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.container button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.container p {
+  margin-top: 20px;
+}
+.container p a {
+  color: #007bff;
+}

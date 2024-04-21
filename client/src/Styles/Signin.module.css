@@ -1,0 +1,52 @@
+.signinContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8); /* Adjust transparency here */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .formGroup {
+    margin-bottom: 20px;
+  }
+  
+  /* label {
+    display: block;
+    margin-bottom: 5px;
+  } */
+  
+.signinContainer input[type="text"],
+.signinContainer input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+.signinContainer button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+.signinContainer button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+.signinContainer p {
+    margin-top: 20px;
+  }
+.signinContainer p a{
+    color: #007bff;
+  }
+  
