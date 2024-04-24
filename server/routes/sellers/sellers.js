@@ -11,9 +11,11 @@ router.post('/signin', userController.login);
 
 // router.post('/forgot-password', userController.forgotPassword);
 
-// router.post('/logout', userController.logout);
+router.post('/logout', userController.logout);
 
-// router.get('/profile', userController.profile);
+router.get('/profile', [authMiddleware], userController.profile);
+
+router.get('/products', [authMiddleware], userController.getProducts);
 
 
 module.exports = router;

@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { data } from "autoprefixer";
 import axios from "axios";
+import { setProduct } from "./productReducer";
 
 
 const initialState = {
@@ -8,6 +10,7 @@ const initialState = {
   userType: "seller",
   loading: false,
   isLoggedIn: false,
+  products: [],
 };
 console.log('initialState_user',initialState.user);
 const sellerSlice = createSlice({
@@ -17,6 +20,10 @@ const sellerSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
       state.isLoggedIn = true;
+      state.loading = false;
+    },
+    setProducts: (state, action) => {
+      state.products = action.payload;
       state.loading = false;
     },
     setCountry: (state, action) => {
@@ -50,6 +57,76 @@ const axiosInstance = axios.create({
   withCredentials: true, // Send cookies with requests
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    let token = localStorage.getItem('authTokenSeller');
+    if (!token) {
+      token = document.cookie.replace(/(?:(?:^|.*;\s*)authTokenSeller\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    }
+    console.log('seller Token @ sellerreducer:', token);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    const { status } = error.response;
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        let refreshToken = localStorage.getItem('refreshTokenSeller');
+        if (!refreshToken) {
+          refreshToken = document.cookie.replace(/(?:(?:^|.*;\s*)refreshTokenSeller\s*=\s*([^;]*).*$)|^.*$/, "$1");
+        }
+        if (!refreshToken) {
+          // Logout if refresh token is not found
+          await axiosInstance.post('/logout'); // Assuming a logout endpoint exists
+          // Clear tokens from storage
+          localStorage.removeItem('authTokenSeller');
+          localStorage.removeItem('refreshTokenSeller');
+          document.cookie = 'authTokenUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          document.cookie = 'refreshTokenUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          // Redirect to login page or handle logout action
+          console.log('Refresh token not found. Logging out.');
+          // Example: window.location.href = '/login';
+          return Promise.reject(new Error('Refresh token not found'));
+        }
+        // Continue with token refresh logic
+        const refreshResponse = await axiosInstance.post('/auth/refresh-token', { refreshToken });
+        const newAuthToken = refreshResponse.data.token;
+        localStorage.setItem('authTokenSeller', newAuthToken);
+        localStorage.setItem('refreshTokenSeller', refreshResponse.data.refreshToken);
+        // document.cookie = `authTokenUser=${newAuthToken};path=/`;expires=${new Date(new Date().getTime() + 1000 * 60).toUTCString()}`;
+        // document.cookie = `refreshTokenUser=${refreshResponse.data.refreshToken};path=/`;expires=${new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7).toUTCString()}`;
+        originalRequest.headers.Authorization = `Bearer ${newAuthToken}`;
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
+        // Handle refresh token failure (e.g., redirect to login)
+        // For example:
+        // window.location.href = '/login'; // Redirect to login page
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error); // Reject other errors
+  }
+);
+
+
+
+
+
 export const registerSeller = (data) => async (dispatch) => {
     try {
       dispatch(setLoading(true));
@@ -63,7 +140,7 @@ export const registerSeller = (data) => async (dispatch) => {
     }
   };
 
-export const loginUser = (data) => async (dispatch) => {
+export const loginSeller = (data) => async (dispatch) => {
     try {
       dispatch(setLoading(true));
       const response = await axiosInstance.post("/signin", data);
@@ -114,15 +191,26 @@ export const getLocation = () => async (dispatch) => {
     }
   };
   
-
+export const sellerProducts = () => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.get("/products");
+      console.log('response @seller reducer',response);
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Fetch products failed:", error.message);
+    }
+  };
 
   
 
-export const { setUser, setLoading, setCountry } = sellerSlice.actions;
+export const { setUser, setLoading, setCountry, setProducts } = sellerSlice.actions;
 
 export const selectUser = (state) => state.seller.user;
 export const selectLoading = (state) => state.seller.loading;
 export const selectCountry = (state) => state.seller.country;
 export const selectIsLoggedIn = (state) => state.seller.isLoggedIn;
+export const selectSellerProducts = (state) => state.seller.products;
 
 export default sellerSlice.reducer;

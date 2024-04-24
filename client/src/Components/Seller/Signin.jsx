@@ -1,12 +1,11 @@
 'use client';
 
 import React from 'react';
-import styles from '../Styles/Signin.module.css';
+import styles from '../../Styles/Signin.module.css';
 import Link from 'next/link';
-import { loginUser, selectUser, setUser } from '@/redux/reducers/userReducer';
+import { loginSeller, setUser } from '@/redux/reducers/sellerReducer';
 import { useDispatch } from 'react-redux';
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie';
 
 const Signin = () => {
   const dispatch = useDispatch();
@@ -21,16 +20,16 @@ const Signin = () => {
       data[key] = value;
     });
     console.log('formdata',data);
-    const res = await dispatch(loginUser(data));
+    const res = await dispatch(loginSeller(data));
     console.log('res',res);
     if (res.status === 200) {
-      localStorage.setItem('authTokenUser',res.data.token);
-      localStorage.setItem('user',JSON.stringify(res.data.user));  // set user in local storage remove in production
+      localStorage.setItem('authTokenSeller',res.data.authTokenSeller);
+      localStorage.setItem('seller',JSON.stringify(res.data.user));  // set user in local storage remove in production
       //set cookie
       // Cookies.set('token',res.data.token);
       console.log('user',res.data.user);
       dispatch(setUser(res.data.user));
-      router.push("/");
+      router.push("/sellers/profile");
     }else{
       console.log("Error while logging in",res);
     }

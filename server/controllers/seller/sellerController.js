@@ -1,4 +1,5 @@
 const Seller = require("../../models/sellerModel");
+const Products = require("../../models/productModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -50,7 +51,6 @@ module.exports.register = async (req, res) => {
       companyName,
       companyWebsite,
       companyType,
-      
     });
   }
   res.status(200).json({ message: "Account registered successfully" });
@@ -84,18 +84,29 @@ module.exports.login = async (req, res) => {
   console.log("sellerController_login user : ", user);
 
   const token = jwt.sign({ _id: user._id }, process.env.AUTH_TOKEN_SECRET);
+  const refreshToken = jwt.sign(
+    { _id: user._id },
+    process.env.REFRESH_TOKEN_SECRET
+  );
   console.log("sellerController_login token : ", token);
 
   // Set cookie in the response
-  res.cookie('authTokenSeller', token, {
+  res.cookie("authTokenSeller", token, {
     maxAge: 86400 * 1000, // 24 hours in milliseconds
     httpOnly: true,
     // secure: true, // Uncomment this for production to send cookie only over HTTPS
     // sameSite: 'strict' // Uncomment this for strict same-site policy
-});
+  });
+  res.cookie("refreshTokenSeller", refreshToken, {
+    maxAge: 86400 * 1000, // 24 hours in milliseconds
+    httpOnly: true,
+    // secure: true, // Uncomment this for production to send cookie only over HTTPS
+    // sameSite: 'strict' // Uncomment this for strict same-site policy
+  });
 
   res.status(200).json({
-    token,
+    authTokenSeller: token,
+    refreshTokenSeller: refreshToken,
     //remove user password from response in production
     user: {
       _id: user._id,
@@ -104,4 +115,32 @@ module.exports.login = async (req, res) => {
       phoneNumber: user.phoneNumber,
     },
   });
+};
+
+module.exports.logout = async (req, res) => {
+  // Clear the cookie in the response
+  res.clearCookie("authTokenSeller");
+  res.clearCookie("refreshTokenSeller");
+  res.status(200).json({ message: "Logged out successfully" });
+};
+
+module.exports.profile = async (req, res) => {
+  // we will get the user from the auth middleware
+  const user = await Seller.findById(req.user._id).select("-password");
+  const products = await Products.find({ seller: req.user._id });
+  res
+    .status(200)
+    .json({ 
+      user, 
+      products, 
+      message: "Profile fetched successfully" ,
+    });
+};
+
+
+module.exports.getProducts = async (req, res) => {
+  const products = await Products.find({ seller: req.user._id });
+  res
+  .status(200)
+  .json({ products, message: "Products fetched successfully" });
 };
