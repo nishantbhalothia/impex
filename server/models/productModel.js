@@ -110,7 +110,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     }, // Default quantity is 1
-
+    moq: {
+      type: Number,
+      default: 1,
+    }, // Default MOQ is 1
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",
