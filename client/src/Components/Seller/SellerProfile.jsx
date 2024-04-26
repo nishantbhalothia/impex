@@ -47,44 +47,89 @@ const SellerProfile = () => {
 
   return (
     <div className={styles.container}>
-      {/* <h1 className={styles.title}>Seller Profile</h1> */}
-      {products.map((product) => (
-        <div key={product._id} className={styles.product}>
-          <div className={styles["product-images"]}>
-            {product.images.map((image, index) => (
-              <img
-                key={index}
-                src={image.url}
-                alt={`Product ${index}`}
-                className={styles["product-image"]}
-              />
-            ))}
-          </div>
-          <h2>{product.name}</h2>
+  {/* <h1 className={styles.title}>Seller Profile</h1> */}
+  {products.map((product) => (
+    <div key={product._id} className={styles.product}>
+      <div className={styles["product-images"]}>
+        {product.images.map((image, index) => (
+          <img
+            key={index}
+            src={image.url}
+            alt={`Product ${index}`}
+            className={styles["product-image"]}
+          />
+        ))}
+      </div>
+      <h2>{product.name}</h2>
+        <div className={styles.productDetails}>
+          <p>MOQ :</p>
+          <p> {product.moq}</p>
+        </div>
+        <div className={styles.productDetails}>
           <p>
-            Price Range :&nbsp;MOQ : {product.moq}&nbsp; &#8804; ${product.priceRange.max} to &nbsp;
+            Price Range : </p> 
+            <p>&nbsp; &#8804; ${product.priceRange.max} to &nbsp;
             &#8805; ${product.priceRange.min}
           </p>
-          <p>Brand Name: {product.brandName}</p>
-          <p>Category: {product.category}</p>
-          <p>Description: {product.description}</p>
-          <p>Manufacturer: {product.manufacturer}</p>
-          <p>Origin: {product.origin}</p>
-          <p>Quantity: {product.quantity}</p>
-          <p>Summary: {product.summary}</p>
-          <p>
-            Dimensions: Length: {product.packagingDimensions.length} Width:{" "}
-            {product.packagingDimensions.width} Height:{" "}
-            {product.packagingDimensions.heigh}
-          </p>
-          {product.isExpirable && typeof product.expiryDate === "string" && (
-            <p>Expiry Date: {product.expiryDate.split("T")[0]}</p>
-          )}
-          <p>Specifications: {product.specifications}</p>
-          <p>Specifications: {product.specifications}</p>
         </div>
-      ))}
+        <div className={styles.productDetails}>
+          <p>Brand Name: </p>
+          <p>{product.brandName}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Category: </p>
+          <p>{product.category}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Description: </p>
+          <p>{product.description}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Manufacturer: </p>
+          <p>{product.manufacturer}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Origin: </p>
+          <p>{product.origin}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Quantity: </p>
+          <p>{product.quantity}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Summary: </p>
+          <p>{product.summary}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>
+            Dimensions(L*W*H): </p>
+            <p>{product.packagingDimensions.length} * {" "}
+            {product.packagingDimensions.width} *{" "}
+            {product.packagingDimensions.height}
+            </p>
+        </div>
+        {product.isExpirable && typeof product.expiryDate === "string" && (
+          <div className={styles.productDetails}>
+            <p>Expiry Date: </p>
+            <p>{product.expiryDate.split("T")[0]}</p>
+          </div>
+        )}
+        <div className={styles.productDetails}>
+          <p>Specifications:</p>
+          <p>{product.specifications}</p>
+        </div>
+        <div className={styles.productDetails}>
+          <p>Specifications: </p>
+          <p>{product.specifications}</p>
+        </div>
+      <div className={styles.buttonCont}>
+        <button className={styles["product-button"]}>Edit</button>
+        <button className={styles["product-button"]}>Delete</button>
+      </div>
     </div>
+  ))}
+</div>
+
   );
 };
 
