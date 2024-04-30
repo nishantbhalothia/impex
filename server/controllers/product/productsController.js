@@ -3,7 +3,7 @@ const Product = require("../../models/productModel");
 const Seller = require("../../models/sellerModel");
 
 module.exports.createProduct = async (req, res) => {
-  console.log(req.body);
+  console.log('Product addNew body @productsController',req.body);
   const {
     name,
     description,
@@ -12,13 +12,14 @@ module.exports.createProduct = async (req, res) => {
     category,
     summary,
     quantity,
-    imageUrl,
+    // imageUrl,
+    images,
     specifications,
     length,
     width,
     height,
   } = req.body;
-  if (!name || !description || !maxPrice || !minPrice || !category || !quantity || !imageUrl) {
+  if (!name || !description || !maxPrice || !minPrice || !category || !quantity || !images || !specifications || !length || !width || !height) {
     return res.status(400).json({ message: "Please enter all fields" });
   }
 
@@ -66,11 +67,7 @@ module.exports.createProduct = async (req, res) => {
         manufacturer: req.body.manufacturer,
         summary,
         quantity,
-        images:[
-          {
-            url: imageUrl,
-          },
-        ],
+        images: [...images],
         specifications,
         packagingDimensions: {
           length,

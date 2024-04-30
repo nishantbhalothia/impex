@@ -24,7 +24,7 @@ const Navbar = () => {
         <div><h3>Bhalothia.com</h3></div>
         <div className={styles.navLeft}>
             <div>
-                <Link href="/">Switch to seller Account</Link>
+                <Link href="/sellers/login">Switch to seller Account</Link>
             </div>
             <div>
             <p>Ship to : {country}</p>

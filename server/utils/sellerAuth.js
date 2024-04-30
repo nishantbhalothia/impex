@@ -4,12 +4,12 @@ const jwt = require('jsonwebtoken');
 
 
 const authMiddleware = async (req, res, next) => {
-    console.log('SellerAuth middleware header:', req.headers);
+    // console.log('SellerAuth middleware header:', req.headers);
     console.log('SellerAuth middleware cookies:', req.cookies);
 
     const authorizationHeader = req.headers.authorization;
     const token = authorizationHeader ? authorizationHeader?.split(' ')[1] : null ||req.cookies['authTokenSeller'] ||req.headers.cookie?.split("=")[1] || req.body.token;
-    console.log('SellerAuth middleware Token:', token);
+    // console.log('SellerAuth middleware Token:', token);
 
     // conditionally check if token is in the header and if it is a Bearer token 
     // if (authorizationHeader || authorizationHeader.startsWith('Bearer')) {

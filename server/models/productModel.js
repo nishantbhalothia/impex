@@ -16,7 +16,7 @@ const productAttributeSchema = new mongoose.Schema({
 const productImageSchema = new mongoose.Schema({
   url: {
     type: String,
-    required: true,
+    // required: true,
   },
 });
 
@@ -92,7 +92,12 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     },
-    images: [productImageSchema],
+    images: [
+      {
+        type: String,
+      },
+    ],
+    // images: [productImageSchema],
     //   attributes: [productAttributeSchema],
     //   variations: [productVariationSchema],
     packagingDimensions: {

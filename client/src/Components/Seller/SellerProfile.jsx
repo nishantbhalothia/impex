@@ -9,12 +9,15 @@ import {
   setProducts,
   setUser,
 } from "@/redux/reducers/sellerReducer";
+import { setProductId } from "@/redux/reducers/productReducer";
+import { useRouter } from "next/navigation";
 
 const SellerProfile = () => {
   const dispatch = useDispatch();
   const products = useSelector(selectSellerProducts);
   const [allProducts, setAllProducts] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const history = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,16 +37,22 @@ const SellerProfile = () => {
   // const products = useSelector(selectSellerProducts);
 
     // Use setTimeout to change the current image index every 2 seconds
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setCurrentImageIndex(prevIndex => (prevIndex + 1) % products.length);
-      }, 2000); // Change image every 2 seconds
+    // useEffect(() => {
+    //   const interval = setInterval(() => {
+    //     setCurrentImageIndex(prevIndex => (prevIndex + 1) % products.length);
+    //   }, 2000); // Change image every 2 seconds
   
-      return () => clearInterval(interval); // Clean up the interval on component unmount
-    }, [products.length]); // Trigger effect when products length changes
+    //   return () => clearInterval(interval); // Clean up the interval on component unmount
+    // }, [products.length]); // Trigger effect when products length changes
   
 
   console.log("Products:", products);
+
+  const updateProductHandler = (id) => () => {
+    console.log("Update product:", id);
+    dispatch(setProductId(id));
+    history.push("/products/update");
+  };
 
   return (
     <div className={styles.container}>
@@ -51,14 +60,14 @@ const SellerProfile = () => {
   {products.map((product) => (
     <div key={product._id} className={styles.product}>
       <div className={styles["product-images"]}>
-        {product.images.map((image, index) => (
+        {/* {product.images.map((image, index) => (
           <img
             key={index}
             src={image.url}
             alt={`Product ${index}`}
             className={styles["product-image"]}
           />
-        ))}
+        ))} */}
       </div>
       <h2>{product.name}</h2>
         <div className={styles.productDetails}>
@@ -123,7 +132,7 @@ const SellerProfile = () => {
           <p>{product.specifications}</p>
         </div>
       <div className={styles.buttonCont}>
-        <button className={styles["product-button"]}>Edit</button>
+        <button className={styles["product-button"]} onClick={updateProductHandler(product._id)}>Edit</button>
         <button className={styles["product-button"]}>Delete</button>
       </div>
     </div>

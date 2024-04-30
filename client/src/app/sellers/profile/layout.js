@@ -1,5 +1,6 @@
 import Navbar from "@/Components/Navbar";
 import SearchBar from "@/Components/SearchBar";
+import NewTray from "@/Components/Seller/NewTray";
 import SellerProfile from "@/Components/Seller/SellerProfile";
 import ServiceType from "@/Components/ServiceType";
 import { Inter } from "next/font/google";
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
         {/* <SearchBar /> */}
         {/* <ServiceType /> */}
         <Navbar />
+        <NewTray />
         <SellerProfile />
         {children}
         

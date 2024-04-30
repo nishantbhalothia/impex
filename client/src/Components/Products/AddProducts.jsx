@@ -4,13 +4,15 @@ import React, { useState } from 'react';
 import style from '@/Styles/Products/AddProducts.module.css';
 import { addProduct } from '@/redux/reducers/productReducer';
 import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
 
 
 const AddProducts = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [otherCategory, setOtherCategory] = useState('');
-  const [isExpirable, setIsExpirable] = useState('No');
+  const [isExpirable, setIsExpirable] = useState(false);
   const [expiryDate, setExpiryDate] = useState('');
 
   const handleCategoryChange = (event) => {
@@ -26,19 +28,42 @@ const AddProducts = () => {
   const handleExpirableChange = (event) => {
     setIsExpirable(event.target.value);
     // Clear the expiry date when "No" is selected
-    if (event.target.value === 'No') {
-      setExpiryDate('');
+    if (event.target.value === false) {
+      setExpiryDate(false);
     }
   };
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
 
     // Convert the form data to JSON
-    const data = {};
-    formData.forEach((value, key) => {
+    // const data = {};
+    // formData.forEach((value, key) => {
+    //   if (data[key]) {
+    //     if (Array.isArray(data[key])) {
+    //       data[key].push(value);
+    //     } else {
+    //       data[key] = [data[key], value];
+    //     }
+    //   } else {
+    //     data[key] = value;
+    //   }
+    // });
+
+     // Create an array to store image names
+  const imageNames = [];
+
+  // Extract image names from the FormData
+  for (const file of formData.getAll('images')) {
+    imageNames.push(file.name);
+  }
+
+  // Convert the rest of the form data to JSON
+  const data = {};
+  formData.forEach((value, key) => {
+    if (key !== 'images') {
       if (data[key]) {
         if (Array.isArray(data[key])) {
           data[key].push(value);
@@ -48,19 +73,26 @@ const AddProducts = () => {
       } else {
         data[key] = value;
       }
-    });
+    }
+  });
+
+  // Add the image names array to the data object
+  data.images = imageNames;
 
     // If the category is "Others", add the other category to the data
     if (selectedCategory === 'Others') {
       data.category = otherCategory;
     }
 
-    // Convert the data to JSON
-    const jsonData = JSON.stringify(data);
-
-    // Send the JSON data to the server
-    console.log(jsonData);
-    dispatch(addProduct(jsonData));  
+    console.log('Form data @AddProducts:', data);
+    const response = await dispatch(addProduct(data));
+    // console.log('Add new product respone',response);
+    // if (response.status === 200) {
+    //   alert('Product added successfully');
+    //   router.push('/sellers/profile');
+    // } else {
+    //   alert('Failed to add product');
+    // }
 
     // Clear the form
     // form.reset();
@@ -121,8 +153,8 @@ const AddProducts = () => {
             value={isExpirable}
             onChange={handleExpirableChange}
           >
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
+            <option value={false}>No</option>
+            <option value={true}>Yes</option>
           </select>
         </div>
         {isExpirable === 'Yes' && (
