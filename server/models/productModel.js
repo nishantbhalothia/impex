@@ -92,12 +92,12 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     },
-    images: [
-      {
-        type: String,
-      },
-    ],
-    // images: [productImageSchema],
+    // images: [
+    //   {
+    //     type: String,
+    //   },
+    // ],
+    images: [productImageSchema],
     //   attributes: [productAttributeSchema],
     //   variations: [productVariationSchema],
     packagingDimensions: {

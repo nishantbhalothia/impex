@@ -89,6 +89,10 @@ module.exports.getAllProducts = async (req, res) => {
 module.exports.getProduct = async (req, res) => {
   const { id } = req.params;
   const product = await Product.findById(id);
+  if (!product) {
+    return res.status(400).json({ message: "Product not found" });
+  }
+  // console.log('Product @producsController getProduct:', product);
   res.status(200).json({ product });
 };
 

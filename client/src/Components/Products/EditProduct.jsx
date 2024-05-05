@@ -39,6 +39,7 @@ const EditProducts = () => {
     length: "",
     width: "",
     height: "",
+    images: [],
   });
 
   useEffect(() => {
@@ -46,9 +47,10 @@ const EditProducts = () => {
       try {
         const response = await dispatch(fetchProduct(productId));
         const productData = response.data.product;
+        console.log("Product data:", productData);
         // Update the form data state with fetched data
-        setFormData((prevData)=>({
-            ...prevData,
+        setFormData((prevData) => ({
+          ...prevData,
           name: productData.name || "",
           brandName: productData.brandName || "",
           manufacturer: productData.manufacturer || "",
@@ -65,6 +67,7 @@ const EditProducts = () => {
           length: productData.packagingDimensions.length || "",
           width: productData.packagingDimensions.width || "",
           height: productData.packagingDimensions.height || "",
+          images: productData.images || [],
         }));
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -75,6 +78,15 @@ const EditProducts = () => {
       fetchProductData();
     }
   }, [dispatch, productId]);
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
   const handleCategoryChange = (event) => {
     const value = event.target.value;
@@ -150,6 +162,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="name">Product Name</label>
           <img
+            className={style.question}
             title="Enter Product name like : Puma shoes with soft gel sole white and read thread breathable fabric daily use"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -165,6 +178,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="brandName">Brand Name</label>
           <img
+            className={style.question}
             title="Enter Product Brand Name like : Puma, Adidas, Crosair, Dell"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -180,6 +194,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="manufacurer">Manufacturer</label>
           <img
+            className={style.question}
             title="Enter Product manufacturer Like: xyz pvt ltd (if multiple manufacturers then enter all)"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -195,6 +210,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="description">Description</label>
           <img
+            className={style.question}
             title="Provide full Description about porduct like:Experience ultimate comfort and style with our innovative Puma shoes. 
             Crafted with a breathable fabric that keeps your feet cool and dry, these shoes feature a soft sole for unparalleled cushioning and support. 
             Not only are they incredibly comfortable, but they are also washable, making them easy to clean and maintain. 
@@ -213,6 +229,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="origin">Country of origin</label>
           <img
+            className={style.question}
             title="Enter Product origin country like : India, China, USA, France"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -228,6 +245,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="isExpirable">Is product expirable</label>
           <img
+            className={style.question}
             title="Select Yes if product has expiry date else select No"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -259,6 +277,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="category">Category</label>
           <img
+            className={style.question}
             title="Select Product Category like : Electronics, Clothing, Books, Home & Kitchen, Beauty & Personal Care, Sports & Outdoors, Toys & Games, Others(if other then write in required field)"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -303,6 +322,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="minPrice">Minimum Price</label>
           <img
+            className={style.question}
             title="Enter Product minimum price to attract more buyers"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -318,6 +338,7 @@ const EditProducts = () => {
 
           <label htmlFor="maxPrice">Maximum Price</label>
           <img
+            className={style.question}
             title="Enter Product maximum price for quality"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -334,6 +355,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="quantity">Quantity</label>
           <img
+            className={style.question}
             title="Enter Product quantity must be greater and equall to 1"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -349,6 +371,7 @@ const EditProducts = () => {
         <div className={style.formInput}>
           <label htmlFor="specifications">Specifications</label>
           <img
+            className={style.question}
             title="Enter Product Specifications like : Material: Fabric, Sole: Rubber, Closure: Lace-Up, Toe Style: Round Toe, Warranty: Manufacturer & Seller, Product Dimensions."
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -364,6 +387,7 @@ const EditProducts = () => {
         <div className={style.upload}>
           <label htmlFor="imageUpload">Image Upload</label>
           <img
+            className={style.question}
             title="Upload Product images for better understanding of product"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -377,9 +401,20 @@ const EditProducts = () => {
           />
           <small>Upload one or more images for the product</small>
         </div>
+        <div className={style.formInput}>
+          {formData.images.map((imageUrl, index) => (
+            <img
+              key={index}
+              src={imageUrl.url}
+              alt={`Image ${index}`}
+              className={style.thumbnail}
+            />
+          ))}
+        </div>
         <div className={style.dimensions}>
           <label htmlFor="packagingDimensions">Packaging Dimensions</label>
           <img
+            className={style.question}
             title="Enter Product Packaging Dimensions like : Length, Width, Height(Only packaging dimensions All in CM and mention product dimension in spesification section)"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
