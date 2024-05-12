@@ -1,19 +1,38 @@
+const multer = require("multer");
+const fs = require("fs");
 
-
-// multerMiddleware.js
-const multer = require('multer');
-
-// Multer middleware for product images
-const productImageStorage = multer.diskStorage({
+console.log("Multer.js is running");
+const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/products/'); // Define the upload directory for product images
+    const dir = "./uploads";
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    cb(null, dir);
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname); // Define the filename
+    cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
   },
 });
 
-const productImageUpload = multer({ storage: productImageStorage });
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/svg" ||
+    file.mimetype === "image/gif" ||
+    file.mimetype === "image/webp"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 
-// Export the product image upload middleware for use in other files
-module.exports = productImageUpload;
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+});
+
+module.exports = upload;

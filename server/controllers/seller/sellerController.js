@@ -1,5 +1,5 @@
 const Seller = require("../../models/sellerModel");
-const Products = require("../../models/productModel");
+const {Product} = require("../../models/productModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -75,7 +75,7 @@ module.exports.login = async (req, res) => {
     return res.status(400).json({ message: "Seller does not exist" });
   }
 
-  const isPasswordMatch = user.comparePassword(password);
+  const isPasswordMatch = await user.comparePassword(password);
 
   if (!isPasswordMatch) {
     return res.status(400).json({ message: "Invalid credentials" });
@@ -127,7 +127,7 @@ module.exports.logout = async (req, res) => {
 module.exports.profile = async (req, res) => {
   // we will get the user from the auth middleware
   const user = await Seller.findById(req.user._id).select("-password");
-  const products = await Products.find({ seller: req.user._id });
+  const products = await Product.find({ seller: req.user._id });
   res
     .status(200)
     .json({ 
@@ -139,7 +139,7 @@ module.exports.profile = async (req, res) => {
 
 
 module.exports.getProducts = async (req, res) => {
-  const products = await Products.find({ seller: req.user._id });
+  const products = await Product.find({ seller: req.user._id });
   res
   .status(200)
   .json({ products, message: "Products fetched successfully" });

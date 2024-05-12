@@ -23,6 +23,7 @@
   justify-content: center;
   width: 100%;
   margin-bottom: 20px;
+  position: relative;
 }
 
 .formInput label {
@@ -30,6 +31,7 @@
   margin-right: 20px;
 }
 
+/* Do not delete this commented code */
 /* .formInput img,
 .dimensions img,
 .upload img{
@@ -154,9 +156,30 @@
   background-color: #4f9ce9;
 }
 
+.thumbnailContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  /* border: 1px solid black; */
+  position: relative;
+}
+
 .thumbnail{
   height: 8em;
   width: 5em;
   border-radius: 5px;
   margin: 1em;
+  position: relative;
+}
+
+.deleteButton{
+  height: 1em;
+  width: 1em;
+  cursor: pointer;
+  position: absolute;
+  top: 1.3em;
+  right: 1.3em;
+  z-index: 1;
 }

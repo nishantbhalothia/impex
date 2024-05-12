@@ -68,12 +68,12 @@ module.exports.login = async (req, res) => {
     return res.status(400).json({ message: "User does not exist" });
   }
 
-  const isPasswordMatch = user.comparePassword(password);
+  const isPasswordMatch = await user.comparePassword(password);
 
   if (!isPasswordMatch) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
-  console.log("ispasswordmatch : ", isPasswordMatch);
+  console.log("ispasswordmatch_@userController : ", isPasswordMatch);
   console.log("userController_login user : ", user);
 
   // const token = jwt.sign({ id: user._id }, process.env.AUTH_TOKEN_SECRET);

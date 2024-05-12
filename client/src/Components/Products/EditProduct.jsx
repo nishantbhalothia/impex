@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import style from "@/Styles/Products/AddProducts.module.css";
+import styles from "@/Styles/Products/AddProducts.module.css";
 import {
   addProduct,
+  deleteImage,
   fetchProduct,
   selectProductId,
 } from "@/redux/reducers/productReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { selectLoading } from "@/redux/reducers/userReducer";
 
 // when seller logged in then all products are fetched from the database and displayed in the seller profile page and stored in the redux store
 // so we can use the useSelector(selectproducts) selectProducts is exported from the productReducer.js file
@@ -156,13 +158,22 @@ const EditProducts = () => {
     // form.reset();
   };
 
+  //  Delete the images from the form database as we are storing the images in the cloudinary
+  const imageDeletionHandler = async (imageId) => {
+    console.log("Delete image @EditProduct:", productId,imageId);
+
+    // ============================================== work to be done on image deletion  ==================================================================
+    const response = await dispatch(deleteImage(productId,imageId));
+    console.log("Delete image response @Edit Product:", response);
+  };
+
   return (
-    <div className={style.container}>
-      <form className={style.form} onSubmit={submitHandler}>
-        <div className={style.formInput}>
+    <div className={styles.container}>
+      <form className={styles.form} onSubmit={submitHandler}>
+        <div className={styles.formInput}>
           <label htmlFor="name">Product Name</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product name like : Puma shoes with soft gel sole white and read thread breathable fabric daily use"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -175,10 +186,10 @@ const EditProducts = () => {
             placeholder="Product name and can add related Keywords and Phrases"
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="brandName">Brand Name</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product Brand Name like : Puma, Adidas, Crosair, Dell"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -191,10 +202,10 @@ const EditProducts = () => {
             placeholder="Ex Bhalothia.com Puma Samsung Sony Dell"
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="manufacurer">Manufacturer</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product manufacturer Like: xyz pvt ltd (if multiple manufacturers then enter all)"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -207,10 +218,10 @@ const EditProducts = () => {
             placeholder="Ex xyx pvt ltd"
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="description">Description</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Provide full Description about porduct like:Experience ultimate comfort and style with our innovative Puma shoes. 
             Crafted with a breathable fabric that keeps your feet cool and dry, these shoes feature a soft sole for unparalleled cushioning and support. 
             Not only are they incredibly comfortable, but they are also washable, making them easy to clean and maintain. 
@@ -223,13 +234,13 @@ const EditProducts = () => {
             name="description"
             value={formData.description}
             placeholder="Add Product Description for customers to easy understand the product details"
-            style={{ overflow: "hidden" }}
+            styles={{ overflow: "hidden" }}
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="origin">Country of origin</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product origin country like : India, China, USA, France"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -242,10 +253,10 @@ const EditProducts = () => {
             placeholder="Ex India China USA"
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="isExpirable">Is product expirable</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Select Yes if product has expiry date else select No"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -261,7 +272,7 @@ const EditProducts = () => {
           </select>
         </div>
         {formData.isExpirable && (
-          <div className={style.formInput}>
+          <div className={styles.formInput}>
             <label htmlFor="expiryDate">Expiry Date</label>
             <input
               type="date"
@@ -274,10 +285,10 @@ const EditProducts = () => {
             />
           </div>
         )}
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="category">Category</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Select Product Category like : Electronics, Clothing, Books, Home & Kitchen, Beauty & Personal Care, Sports & Outdoors, Toys & Games, Others(if other then write in required field)"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -304,7 +315,7 @@ const EditProducts = () => {
 
           {/* Display the input field for other category if "Others" is selected */}
           {formData.category === "Others" && (
-            <div className={style.formInput}>
+            <div className={styles.formInput}>
               <label htmlFor="otherCategory">Other Category</label>
               <input
                 type="text"
@@ -319,16 +330,16 @@ const EditProducts = () => {
             </div>
           )}
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="minPrice">Minimum Price</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product minimum price to attract more buyers"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
           />
           <input
-            className={style.priceRange}
+            className={styles.priceRange}
             type="number"
             id="minPrice"
             name="minPrice"
@@ -338,13 +349,13 @@ const EditProducts = () => {
 
           <label htmlFor="maxPrice">Maximum Price</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product maximum price for quality"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
           />
           <input
-            className={style.priceRange}
+            className={styles.priceRange}
             type="number"
             id="maxPrice"
             name="maxPrice"
@@ -352,10 +363,10 @@ const EditProducts = () => {
             placeholder="Maximum price"
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="quantity">Quantity</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product quantity must be greater and equall to 1"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -368,10 +379,10 @@ const EditProducts = () => {
             placeholder="Product quantity must be >=1"
           />
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           <label htmlFor="specifications">Specifications</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product Specifications like : Material: Fabric, Sole: Rubber, Closure: Lace-Up, Toe Style: Round Toe, Warranty: Manufacturer & Seller, Product Dimensions."
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -381,13 +392,13 @@ const EditProducts = () => {
             name="specifications"
             value={formData.specifications}
             placeholder="Add Product Specifications"
-            style={{ overflow: "hidden" }}
+            styles={{ overflow: "hidden" }}
           />
         </div>
-        <div className={style.upload}>
+        <div className={styles.upload}>
           <label htmlFor="imageUpload">Image Upload</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Upload Product images for better understanding of product"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"
@@ -401,20 +412,29 @@ const EditProducts = () => {
           />
           <small>Upload one or more images for the product</small>
         </div>
-        <div className={style.formInput}>
+        <div className={styles.formInput}>
           {formData.images.map((imageUrl, index) => (
-            <img
-              key={index}
-              src={imageUrl.url}
-              alt={`Image ${index}`}
-              className={style.thumbnail}
-            />
+            <div className={styles.thumbnailContainer}>
+              <img
+                key={index}
+                src={imageUrl.url}
+                alt={`Image ${index}`}
+                className={styles.thumbnail}
+              />
+              <img
+                onClick={() => imageDeletionHandler(imageUrl._id)}
+                className={styles.deleteButton}
+                src="https://cdn-icons-png.flaticon.com/128/5610/5610967.png"
+                alt="delete"
+                title="Delete image permanently "
+              />
+            </div>
           ))}
         </div>
-        <div className={style.dimensions}>
+        <div className={styles.dimensions}>
           <label htmlFor="packagingDimensions">Packaging Dimensions</label>
           <img
-            className={style.question}
+            className={styles.question}
             title="Enter Product Packaging Dimensions like : Length, Width, Height(Only packaging dimensions All in CM and mention product dimension in spesification section)"
             src="https://cdn-icons-png.flaticon.com/128/471/471664.png"
             alt="required"

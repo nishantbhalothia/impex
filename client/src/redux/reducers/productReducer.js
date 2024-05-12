@@ -107,8 +107,9 @@ axiosInstance.interceptors.response.use(
 export const fetchProducts = () => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const response = await axiosInstance.get("/getAllProducts");
-    dispatch(setProducts(response.data));
+    const response = await axiosInstance.get("/getAll");
+    dispatch(setProducts(response.data.products));
+    console.log("All Products response @productReducer:", response);
   } catch (error) {
     dispatch(setLoading(false));
     console.error("Fetch products failed:", error.message);
@@ -160,6 +161,18 @@ export const deleteProduct = (id) => async (dispatch) => {
   } catch (error) {
     dispatch(setLoading(false));
     console.error("Delete product failed:", error.message);
+  }
+}
+
+export const deleteImage = (id, imageId) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const response = await axiosInstance.delete(`/deleteImage/${id}/${imageId}`);
+    console.log("Delete image response @productReducer:", response.data);
+    return response;
+  } catch (error) {
+    dispatch(setLoading(false));
+    console.error("Delete image failed:", error.message);
   }
 }
 

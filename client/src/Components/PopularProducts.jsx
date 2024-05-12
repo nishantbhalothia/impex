@@ -1,13 +1,14 @@
 
 import React from 'react'
 import styles from '../Styles/PopularProducts.module.css'
+import Link from 'next/link'
 
 const PopularProducts = () => {
   return (
     <div className={styles.container}>
         <div className={styles.viewAll}>
         <h1>Popular Products</h1>
-            <h2><a href="">View All -&gt;</a></h2>
+            <h2><Link href="/products/home">View All -&gt;</Link></h2>
         </div>
         <div className={styles.productContainer}>
             <div className={styles.product}>

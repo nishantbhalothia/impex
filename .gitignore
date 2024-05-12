@@ -1,4 +1,4 @@
-
+# client
 client/node_modules
 client/.next
 client/.env
@@ -6,6 +6,7 @@ client/.env.local
 client/.env.development
 client/.env.development.local
 client/.env.production  
+client/.env.test
 
 # Server
 server/node_modules
@@ -14,3 +15,4 @@ server/.env.local
 server/.env.development
 server/.env.development.local
 server/.env.production
+server/uploads

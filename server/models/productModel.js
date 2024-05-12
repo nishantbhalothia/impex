@@ -14,7 +14,7 @@ const productAttributeSchema = new mongoose.Schema({
 
 // Define a schema for product images
 const productImageSchema = new mongoose.Schema({
-  url: {
+  path: {
     type: String,
     // required: true,
   },
@@ -130,5 +130,8 @@ const productSchema = new mongoose.Schema(
 
 // Create a Mongoose model for the product schema
 const Product = mongoose.model("Product", productSchema);
+const Image = mongoose.model("Image", productImageSchema);
 
-module.exports = Product;
+// Export the models
+// module.exports = Product;
+module.exports = { Product, Image };

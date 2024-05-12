@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
-const Product = require("../../models/productModel");
+const {Product, Image} = require("../../models/productModel");
 const Seller = require("../../models/sellerModel");
 
 module.exports.createProduct = async (req, res) => {
   console.log('Product addNew body @productsController',req.body);
+  console.log('Product addNew files @productsController',req.files);
   const {
     name,
     description,
@@ -81,11 +82,14 @@ module.exports.createProduct = async (req, res) => {
   }
 };
 
+// ============================================ getAllProducts ============================================
 module.exports.getAllProducts = async (req, res) => {
   const products = await Product.find();
+  // console.log('All Products:', products); 
   res.status(200).json({ products });
 };
 
+// ============================================ getProduct ============================================
 module.exports.getProduct = async (req, res) => {
   const { id } = req.params;
   const product = await Product.findById(id);
@@ -96,6 +100,7 @@ module.exports.getProduct = async (req, res) => {
   res.status(200).json({ product });
 };
 
+// ============================================ updateProduct ============================================
 module.exports.updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
@@ -115,6 +120,7 @@ module.exports.updateProduct = async (req, res) => {
   }
 };
 
+// ============================================ deleteProduct ============================================
 module.exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
   const product = await Product.findByIdAndDelete(id);
@@ -126,7 +132,7 @@ module.exports.deleteProduct = async (req, res) => {
   res.status(200).json({ message: "Product deleted successfully" });
 };
 
-
+// ============================================ filterProducts ============================================
 module.exports.filterProducts = async (req, res) => {
   try {
     const { name, size, priceMin, priceMax, category } = req.query;
@@ -163,4 +169,44 @@ module.exports.filterProducts = async (req, res) => {
 
     
   }
+}
+
+
+//  ============================================ deleteImage ============================================
+module.exports.deleteImage = async (req, res) => {
+  const { id, imageId } = req.params;
+  console.log('deleteImage id and imageId:', id, imageId);
+  const product = await Product.findById(id);
+  if (!product) {
+    console.log('Product not found:', product);
+    return res.status(400).json({ message: "Product not found" });
+  }
+  const image = await Image.findById(imageId);
+  if (!image) {
+    console.log('Image not found:', image);
+    return res.status(400).json({ message: "Image not found" });
+  }
+  await image.deleteOne();
+  res.status(200).json({ message: "Image deleted successfully" });
+};
+
+
+//  ============================================ addImage ============================================
+module.exports.addImage = async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+  if (!product) {
+    return res.status(400).json({ message: "Product not found" });
+  }
+  const newImage = await Image.create({
+    path: req.file.path,
+    // productId: id,
+  });
+  res.status(200).json({ message: "Image added successfully" });
+}
+
+
+//  ============================================ sample response ============================================
+module.exports.sample = async (req, res) => {
+  res.status(200).json({ message: "Sample route" });
 }
