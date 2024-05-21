@@ -127,7 +127,7 @@ sellerSchema.pre('findByIdAndUpdate', async function (next) {
 // Generate JWT
 sellerSchema.methods.generateAuthToken = async function () {
     try {
-        const token = jwt.sign({ _id: this._id, email:this.email, name:this.name }, process.env.AUTH_TOKEN_SECRET, { expiresIn: '4h' });
+        const token = jwt.sign({ _id: this._id, email:this.email, name:this.name }, process.env.AUTH_TOKEN_SECRET, { expiresIn: '4m' });
         return token;
     } catch (error) {
         console.error(error);
@@ -135,7 +135,7 @@ sellerSchema.methods.generateAuthToken = async function () {
 };
 sellerSchema.methods.generateRefreshToken = async function () {
     try {
-        const token = jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7h' });
         return token;
     } catch (error) {
         console.error(error);

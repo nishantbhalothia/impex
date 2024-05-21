@@ -9,7 +9,7 @@ import {
   setProducts,
   setUser,
 } from "@/redux/reducers/sellerReducer";
-import { setProductId } from "@/redux/reducers/productReducer";
+import { deleteProduct, setProductId } from "@/redux/reducers/productReducer";
 import { useRouter } from "next/navigation";
 
 const SellerProfile = () => {
@@ -54,6 +54,13 @@ const SellerProfile = () => {
     history.push("/products/update");
   };
 
+  const productDeletionHandler = (id) => () => {
+    console.log("Delete product:", id);
+    dispatch(deleteProduct(id));
+    // history.push("/sellers/profile");
+    window.location.href = "/sellers/profile";
+  };
+
   return (
     <div className={styles.container}>
   {/* <h1 className={styles.title}>Seller Profile</h1> */}
@@ -68,6 +75,12 @@ const SellerProfile = () => {
             className={styles["product-image"]}
           />
         ))} */}
+        <img
+            key={product.images[0]?._id}
+            src={product.images[0]?.url}
+            alt={`Product ${'image'}`}
+            className={styles["product-image"]}
+          />
       </div>
       <h2>{product.name}</h2>
         <div className={styles.productDetails}>
@@ -127,13 +140,9 @@ const SellerProfile = () => {
           <p>Specifications:</p>
           <p>{product.specifications}</p>
         </div>
-        <div className={styles.productDetails}>
-          <p>Specifications: </p>
-          <p>{product.specifications}</p>
-        </div>
       <div className={styles.buttonCont}>
         <button className={styles["product-button"]} onClick={updateProductHandler(product._id)}>Edit</button>
-        <button className={styles["product-button"]}>Delete</button>
+        <button className={styles["product-button"]} onClick={productDeletionHandler(product._id)}>Delete</button>
       </div>
     </div>
   ))}

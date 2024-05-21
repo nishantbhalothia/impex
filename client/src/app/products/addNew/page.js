@@ -1,4 +1,5 @@
 import AddProducts from "@/Components/Products/AddProducts";
+import Sample from "@/Components/Products/Sample";
 
 
 export default function addNew() {
@@ -6,6 +7,7 @@ export default function addNew() {
         <div>
             {/* <h1>Add New Product</h1> */}
             <AddProducts />
+            {/* <Sample /> */}
         </div>
     );
     }

@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <nav className={styles.navbar}>
-        <div><h3>Bhalothia.com</h3></div>
+        <div><h3> <Link href={'/'}>Bhalothia.com</Link></h3></div>
         <div className={styles.navLeft}>
             <div>
                 <Link href="/sellers/login">Switch to seller Account</Link>

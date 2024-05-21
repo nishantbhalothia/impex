@@ -23,7 +23,7 @@ const Signin = () => {
     console.log('formdata',data);
     const res = await dispatch(loginUser(data));
     console.log('res',res);
-    if (res.status === 200) {
+    if (res?.status === 200) {
       localStorage.setItem('authTokenUser',res.data.token);
       localStorage.setItem('user',JSON.stringify(res.data.user));  // set user in local storage remove in production
       //set cookie

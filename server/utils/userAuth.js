@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = async (req, res, next) => {
-    const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null || req.cookies['authTokenUser'] || req.headers?.cookie.split("=")[1] || req.body.authTokenUser;
+    const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null || req.cookies['authTokenUser'] || req.headers?.cookie?.split("=")[1] || req.body.authTokenUser;
 
     if (!token) {
         return res.status(401).json({ message: 'Token not found' });

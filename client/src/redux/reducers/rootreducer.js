@@ -3,11 +3,13 @@ import { combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./userReducer";
 import sellerReducer from "./sellerReducer";
 import productReducer from "./productReducer";
+import manufacturerReducer from "./manufacturerReducer";
 
 const rootReducer = combineReducers({
     user: userReducer,
     seller: sellerReducer,
     product: productReducer,
+    manufacturer: manufacturerReducer,
     // posts: postsReducer,
     // comments: commentsReducer,
     // likes: likesReducer,

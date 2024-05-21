@@ -50,6 +50,7 @@ const axiosInstance = axios.create({
   withCredentials: true, // Send cookies with requests
 });
 
+// Add a request interceptor to set the Authorization header
 axiosInstance.interceptors.request.use(
   (config) => {
     let token = localStorage.getItem('authTokenUser');
@@ -67,6 +68,7 @@ axiosInstance.interceptors.request.use(
 );
 
 
+// Add a response interceptor to handle token refresh
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
@@ -117,7 +119,7 @@ axiosInstance.interceptors.response.use(
 
 
 
-
+// =========================================================== register user ===========================================================
 export const registerUser = (data) => async (dispatch) => {
     try {
       dispatch(setLoading(true));
@@ -131,6 +133,7 @@ export const registerUser = (data) => async (dispatch) => {
     }
   };
 
+  // =========================================================== login user ===========================================================
 export const loginUser = (data) => async (dispatch) => {
     try {
       dispatch(setLoading(true));
@@ -144,6 +147,7 @@ export const loginUser = (data) => async (dispatch) => {
     }
   };
 
+  // =========================================================== logout user ===========================================================
 export const logoutUser = () => async (dispatch) => {
     try {
       dispatch(setLoading(true)); 
@@ -156,6 +160,7 @@ export const logoutUser = () => async (dispatch) => {
     }
   };
 
+  // =========================================================== fetch user location ===========================================================
 export const getLocation = () => async (dispatch) => {
   const getCountryFromCoordinates = async (latitude, longitude) => {
     try {

@@ -7,6 +7,8 @@ import {
   deleteImage,
   fetchProduct,
   selectProductId,
+  updateProduct,
+  selectProduct,
 } from "@/redux/reducers/productReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -19,11 +21,13 @@ import { selectLoading } from "@/redux/reducers/userReducer";
 const EditProducts = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  //   const [selectedCategory, setSelectedCategory] = useState("");
-  //   const [otherCategory, setOtherCategory] = useState("");
-  //   const [isExpirable, setIsExpirable] = useState(false);
-  //   const [expiryDate, setExpiryDate] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [otherCategory, setOtherCategory] = useState("");
+  const [isExpirable, setIsExpirable] = useState(false);
+  const [expiryDate, setExpiryDate] = useState(false);
   const productId = useSelector(selectProductId);
+  const productData = useSelector(selectProduct);
+  console.log("Product data @EditProducts:", productData);
   const [formData, setFormData] = useState({
     name: "",
     brandName: "",
@@ -107,6 +111,7 @@ const EditProducts = () => {
     }));
   };
 
+  // ===================================================================== form submit handler =============================================================================
   const submitHandler = async (event) => {
     event.preventDefault();
     const form = event.target;
@@ -145,14 +150,14 @@ const EditProducts = () => {
     }
 
     console.log("Form data @EditProducts:", data);
-    // const response = await dispatch(addProduct(data));
-    // console.log('Add new product respone',response);
-    // if (response.status === 200) {
-    //   alert('Product added successfully');
-    //   router.push('/sellers/profile');
-    // } else {
-    //   alert('Failed to add product');
-    // }
+    const response = await dispatch(updateProduct(productId, data));
+    console.log("Updated product respone", response);
+    if (response?.status === 200) {
+      alert("Product updated successfully");
+      router.push("/sellers/profile");
+    } else {
+      alert("Failed to add product");
+    }
 
     // Clear the form
     // form.reset();
@@ -160,10 +165,10 @@ const EditProducts = () => {
 
   //  Delete the images from the form database as we are storing the images in the cloudinary
   const imageDeletionHandler = async (imageId) => {
-    console.log("Delete image @EditProduct:", productId,imageId);
+    console.log("Delete image @EditProduct:", productId, imageId);
 
     // ============================================== work to be done on image deletion  ==================================================================
-    const response = await dispatch(deleteImage(productId,imageId));
+    const response = await dispatch(deleteImage(productId, imageId));
     console.log("Delete image response @Edit Product:", response);
   };
 
@@ -183,6 +188,7 @@ const EditProducts = () => {
             id="name"
             name="name"
             value={formData.name}
+            onChange={handleInputChange}
             placeholder="Product name and can add related Keywords and Phrases"
           />
         </div>
@@ -199,11 +205,12 @@ const EditProducts = () => {
             id="brandName"
             name="brandName"
             value={formData.brandName}
-            placeholder="Ex Bhalothia.com Puma Samsung Sony Dell"
+            onChange={handleInputChange}
+            placeholder="Bhalothia.com Puma Samsung Sony Dell"
           />
         </div>
         <div className={styles.formInput}>
-          <label htmlFor="manufacurer">Manufacturer</label>
+          <label htmlFor="manufacturer">Manufacturer</label>
           <img
             className={styles.question}
             title="Enter Product manufacturer Like: xyz pvt ltd (if multiple manufacturers then enter all)"
@@ -212,10 +219,11 @@ const EditProducts = () => {
           />
           <input
             type="text"
-            id="manufacurer"
-            name="manufacurer"
+            id="manufacturer"
+            name="manufacturer"
             value={formData.manufacturer}
-            placeholder="Ex xyx pvt ltd"
+            onChange={handleInputChange}
+            placeholder="xyz pvt ltd"
           />
         </div>
         <div className={styles.formInput}>
@@ -233,6 +241,7 @@ const EditProducts = () => {
             id="description"
             name="description"
             value={formData.description}
+            onChange={handleInputChange}
             placeholder="Add Product Description for customers to easy understand the product details"
             styles={{ overflow: "hidden" }}
           />

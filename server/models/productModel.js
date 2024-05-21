@@ -14,9 +14,13 @@ const productAttributeSchema = new mongoose.Schema({
 
 // Define a schema for product images
 const productImageSchema = new mongoose.Schema({
-  path: {
+  url: {
     type: String,
     // required: true,
+  },
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
   },
 });
 
@@ -92,11 +96,16 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     },
-    // images: [
-    //   {
+    // images: [{
+    //   url: {
     //     type: String,
+    //     // required: true
     //   },
-    // ],
+    //   altText: {
+    //     type: String,
+    //     default: 'Product Image'
+    //   }
+    // }],
     images: [productImageSchema],
     //   attributes: [productAttributeSchema],
     //   variations: [productVariationSchema],
