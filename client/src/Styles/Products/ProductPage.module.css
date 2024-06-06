@@ -1,0 +1,146 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.product {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.swiperContainer {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  border-radius: 1rem;
+  border: 1px solid #ddd;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.title {
+  font-size: 2rem;
+  margin: 20px 0;
+  text-align: center;
+  color: #333;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.price {
+  font-size: 1.5rem;
+  color: #27ae60;
+}
+
+.moq {
+  font-size: 1rem;
+  color: #333;
+}
+
+.stockContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.stock {
+  font-size: 1rem;
+  color: #e74c3c;
+}
+
+.expiry {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.descriptionContainer, .specificationsContainer, .summaryContainer {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.description, .specifications, .summary {
+  font-size: 1rem;
+  color: #666;
+}
+
+.packagingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.packagingDimensions, .weight {
+  font-size: 1rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .swiperContainer {
+    width: 100%;
+    height: 20rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .price {
+    font-size: 1.2rem;
+  }
+
+  .description, .stock, .specifications, .summary, .packagingDimensions, .weight {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .swiperContainer {
+    height: 15rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+
+  .price {
+    font-size: 1rem;
+  }
+
+  .description, .stock, .specifications, .summary, .packagingDimensions, .weight {
+    font-size: 0.8rem;
+  }
+}

@@ -152,13 +152,19 @@ module.exports.getAllProducts = async (req, res) => {
 
 // ============================================ getProduct using _id ============================================
 module.exports.getProduct = async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  if (!product) {
-    return res.status(400).json({ message: "Product not found" });
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(400).json({ message: "Product not found" });
+    }
+    // console.log('Product @producsController getProduct:', product);
+    res.status(200).json({ product });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+    
   }
-  // console.log('Product @producsController getProduct:', product);
-  res.status(200).json({ product });
 };
 
 // ============================================ updateProduct ============================================
@@ -181,14 +187,20 @@ module.exports.updateProduct = async (req, res) => {
 
 // ============================================ deleteProduct ============================================
 module.exports.deleteProduct = async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findByIdAndDelete(id);
-  if (!product) {
-    return res.status(400).json({ message: "Product not found" });
+  try {
+    const { id } = req.params;
+    const product = await Product.findByIdAndDelete(id);
+    if (!product) {
+      return res.status(400).json({ message: "Product not found" });
+    }
+    // const objectId = new mongoose.Types.ObjectId(id);
+    // product.deleteOne(objectId);
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.log('error in delete product "productController"', error);
+    res.status(400).json({ message: "Product not found" });
+    
   }
-  // const objectId = new mongoose.Types.ObjectId(id);
-  // product.deleteOne(objectId);
-  res.status(200).json({ message: "Product deleted successfully" });
 };
 
 // ============================================ filterProducts ============================================
@@ -247,41 +259,53 @@ module.exports.filterProducts = async (req, res) => {
 
 //  ============================================ deleteImage ============================================
 module.exports.deleteImage = async (req, res) => {
-  const { id, imageId } = req.params;
-  console.log("deleteImage id and imageId:", id, imageId);
-  const product = await Product.findById(id);
-  if (!product) {
-    console.log("Product not found:", product);
-    return res.status(400).json({ message: "Product not found" });
+  try {
+    const { id, imageId } = req.params;
+    console.log("deleteImage id and imageId:", id, imageId);
+    const product = await Product.findById(id);
+    if (!product) {
+      console.log("Product not found:", product);
+      return res.status(400).json({ message: "Product not found" });
+    }
+    const image = product.images.id(imageId);
+    if (!image) {
+      console.log("Image not found:", image);
+      return res.status(400).json({ message: "Image not found" });
+    }
+    await image.deleteOne();
+    res.status(200).json({ message: "Image deleted successfully" });
+    // const image = await Image.findById(imageId);
+    // if (!image) {
+    //   console.log("Image not found:", image);
+    //   return res.status(400).json({ message: "Image not found" });
+    // }
+    // await image.deleteOne();
+    // res.status(200).json({ message: "Image deleted successfully" });
+  } catch (error) {
+    console.log("Error in deleteImage @productControllers", error);
+    res.status(500).json({ message: "Internal server error" });
+    
   }
-  const image = product.images.id(imageId);
-  if (!image) {
-    console.log("Image not found:", image);
-    return res.status(400).json({ message: "Image not found" });
-  }
-  await image.deleteOne();
-  res.status(200).json({ message: "Image deleted successfully" });
-  // const image = await Image.findById(imageId);
-  // if (!image) {
-  //   console.log("Image not found:", image);
-  //   return res.status(400).json({ message: "Image not found" });
-  // }
-  // await image.deleteOne();
-  // res.status(200).json({ message: "Image deleted successfully" });
 };
 
 //  ============================================ addImage ============================================
 module.exports.addImage = async (req, res) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  if (!product) {
-    return res.status(400).json({ message: "Product not found" });
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(400).json({ message: "Product not found" });
+    }
+    const newImage = await Image.create({
+      path: req.file.path,
+      // productId: id,
+    });
+    res.status(200).json({ message: "Image added successfully" });
+  } catch (error) {
+    console.log("Error in addImage @productControllers", error);
+    res.status(500).json({ message: "Internal server error" });
+    
   }
-  const newImage = await Image.create({
-    path: req.file.path,
-    // productId: id,
-  });
-  res.status(200).json({ message: "Image added successfully" });
 };
 
 //  ============================================ sample response ============================================

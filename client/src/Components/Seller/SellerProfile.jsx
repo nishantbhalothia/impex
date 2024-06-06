@@ -17,7 +17,7 @@ const SellerProfile = () => {
   const products = useSelector(selectSellerProducts);
   const [allProducts, setAllProducts] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const history = useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,14 +51,20 @@ const SellerProfile = () => {
   const updateProductHandler = (id) => () => {
     console.log("Update product:", id);
     dispatch(setProductId(id));
-    history.push("/products/update");
+    router.push("/products/update");
   };
 
   const productDeletionHandler = (id) => () => {
     console.log("Delete product:", id);
     dispatch(deleteProduct(id));
-    // history.push("/sellers/profile");
+    // router.push("/sellers/profile");
     window.location.href = "/sellers/profile";
+  };
+
+  const productPromotionHandler = (id) => () => {
+    console.log("Promote product:", id);
+    // dispatch(setProductId(id));
+    router.push("/sellers/products/promote");
   };
 
   return (
@@ -143,6 +149,7 @@ const SellerProfile = () => {
       <div className={styles.buttonCont}>
         <button className={styles["product-button"]} onClick={updateProductHandler(product._id)}>Edit</button>
         <button className={styles["product-button"]} onClick={productDeletionHandler(product._id)}>Delete</button>
+        <button className={styles["product-button"]} onClick={productPromotionHandler(product._id)}>Promote</button>
       </div>
     </div>
   ))}

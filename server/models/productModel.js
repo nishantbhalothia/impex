@@ -37,6 +37,74 @@ const productVariationSchema = new mongoose.Schema({
   attributes: [productAttributeSchema],
 });
 
+// define a schema for product reviews
+const productReviewSchema = new mongoose.Schema({
+  reviewer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+  },
+  review: {
+    type: String,
+  },
+});
+
+// Define a schema for product promotions
+const productPromotionSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  discount: {
+    type: Number,
+    required: true,
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
+  },
+});
+
+// Define a schema for paid promotions
+const paidPromotionSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  cost: {
+    type: Number,
+    required: true,
+  },
+  visibility: {
+    type: String,
+    enum: ['all', 'prime', 'segmented'], // Visibility options
+    default: 'all',
+  },
+  //products: [String], // Array of product IDs
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
+  },
+});
+
 // Define the main product schema
 const productSchema = new mongoose.Schema(
   {
@@ -96,17 +164,10 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     },
-    // images: [{
-    //   url: {
-    //     type: String,
-    //     // required: true
-    //   },
-    //   altText: {
-    //     type: String,
-    //     default: 'Product Image'
-    //   }
-    // }],
     images: [productImageSchema],
+    reviews: [productReviewSchema],
+    promotions: [productPromotionSchema],
+    paidPromotions: [paidPromotionSchema],
     //   attributes: [productAttributeSchema],
     //   variations: [productVariationSchema],
     packagingDimensions: {
@@ -119,6 +180,9 @@ const productSchema = new mongoose.Schema(
       height: {
         type: Number,
       },
+    },
+    weight: {
+      type: Number,
     },
     quantity: {
       type: Number,
