@@ -273,6 +273,54 @@ module.exports.profile = async (req, res) => {
   res.status(200).json(user);
 };
 
+// =========================================================== get user addresses ===========================================================
+module.exports.getAddresses = async (req, res) => {
+  console.log("userController_getAddresses req.body : ", req.body);
+  console.log(
+    "userController_getAddresses req.headers.cookie : ",
+    req.headers.cookie
+  );
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });  
+    }
+  
+    res.status(200).json(user.addresses);
+  } catch (error) {
+    console.error("get addresses ERROR console", error);
+    return res.status(400).json({ message: "Addresses not found" });
+    
+  }
+};
+
+// =========================================================== add user address ===========================================================
+module.exports.addAddress = async (req, res) => {
+  console.log("userController_addAddress req.body : ", req.body); 
+  console.log(
+    "userController_addAddress req.headers.cookie : ",
+    req.headers.cookie
+  );
+
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {  
+      return res.status(400).json({ message: "User does not exist" });
+    }
+  
+    const { address } = req.body;
+  
+    user.addAddress(address);
+  
+    res.status(200).json({ message: "Address added successfully" });
+  } catch (error) {
+    console.error("add address ERROR console", error);
+    return res.status(400).json({ message: "Address not added" });
+    
+  }
+};
+
 // =========================================================== refresh token ===========================================================
 module.exports.refreshToken = async (req, res) => {
   console.log("userController_refreshToken req.body : ", req.body);

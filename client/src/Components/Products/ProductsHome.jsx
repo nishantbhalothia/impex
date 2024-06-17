@@ -1,50 +1,86 @@
-'use client'
+"use client";
 
-import React, { useEffect } from 'react'
-import styles from '@/Styles/Products/ProductsHome.module.css'
-import { fetchProducts, selectProducts } from '@/redux/reducers/productReducer'
-import { useDispatch, useSelector } from 'react-redux'
-import { logClickedProduct } from '@/utils/userTracking'
-import { selectUser } from '@/redux/reducers/userReducer'
-import { useRouter } from 'next/navigation'
-
+import React, { useEffect, useState } from "react";
+import styles from "@/Styles/Products/ProductsHome.module.css";
+import { fetchProducts, selectProducts } from "@/redux/reducers/productReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { logClickedProduct } from "@/utils/userTracking";
+import { selectUser } from "@/redux/reducers/userReducer";
+import { useRouter } from "next/navigation";
 
 const ProductsHome = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const products = useSelector(selectProducts);
+  const user = useSelector(selectUser);
+  console.log("All Products @ProductsHome:", products);
+  const [wishlist, setWishlist] = useState([]);
 
-    const router = useRouter()
-    const dispatch = useDispatch()
-    const products = useSelector(selectProducts)
-    const user = useSelector(selectUser)
-    console.log('All Products @ProductsHome:', products);
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
 
-    useEffect(() => {
-        dispatch(fetchProducts())
-    }, [dispatch])
+  const clickHandler = (productId) => () => {
+    console.log(
+      "Product Clicked @productHome.jsx:",
+      "user._id",
+      user.id,
+      "productID",
+      productId
+    );
+    logClickedProduct(user.id, productId);
+    router.push(`/products/${productId}`);
+  };
 
-    // const products = useSelector(selectProducts).products
+  const toggleWishlist = (productId) => () => {
+    setWishlist((prevWishlist) =>
+      prevWishlist.includes(productId)
+        ? prevWishlist.filter((id) => id !== productId)
+        : [...prevWishlist, productId]
+    );
+  };
 
-    //  we are using a higher order function to pass the product id to the clickHandler this is because we need to pass the product id to the logClickedProduct function
-    //===================================== here we are logging the clicked product by the user to the database=====================================
-    const clickHandler = (productId) => () => {
-        console.log('Product Clicked @productHome.jsx:',"user._id",user.id,"productID", productId);
-        logClickedProduct(user.id, productId)
-        router.push(`/products/${productId}`)
-    }
   return (
     <div className={styles.container}>
-        {products.map((product, index) => (
-            <div key={product._id} className={styles.product} onClick={clickHandler(product._id)}>
-                <div className={styles.productImg}>
-                    <img src={product?.images[0].url } alt={product.name} />
-                </div>
-                <div className={styles.productInfo}>
-                    <h3>{product.name}</h3>
-                    {/* <div><p>{product.description}</p></div> */}
-                    <div className={styles.price}><p>${product.priceRange.min}-{product.priceRange.max}</p></div>
-                </div>
+      {products.map((product) => (
+        <div key={product._id} className={styles.product}>
+          <div
+            className={styles.productImg}
+            onClick={clickHandler(product._id)}
+          >
+            <img src={product?.images[0].url} alt={product.name} />
+          </div>
+          <div
+            className={styles.wishlist}
+            onClick={toggleWishlist(product._id)}
+          >
+            {wishlist.includes(product._id) ? (
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/9484/9484251.png"
+                alt="wishlisted"
+              />
+            ) : (
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/1077/1077035.png"
+                alt="add to wishlist"
+              />
+            )}
+          </div>
+          <div
+            className={styles.productInfo}
+            onClick={clickHandler(product._id)}
+          >
+            <h3>{product.name}</h3>
+            <div className={styles.price}>
+              <p>
+                ${product.priceRange.min}-{product.priceRange.max}
+              </p>
             </div>
-        ))}
+          </div>
+        </div>
+      ))}
     </div>
-)}
+  );
+};
 
-export default ProductsHome
+export default ProductsHome;

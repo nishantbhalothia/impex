@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getLocation, selectCountry, selectIsLoggedIn, selectUser } from '../redux/reducers/userReducer.js';
 import Link from 'next/link';
 import MyAccount from './MyAccount';
-// import { useAppSelector } from '@/redux/hooks';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
     const [showAccount, setShowAccount] = useState(false);
@@ -14,9 +14,19 @@ const Navbar = () => {
     const isLoggedIn = useSelector(selectIsLoggedIn);
     const user = useSelector(selectUser);
 
+    const router = useRouter();
+
     const dispatch = useDispatch();
     if (!country) {
         dispatch(getLocation());
+    }
+
+    const cartHandler = () => {
+        if (isLoggedIn) {
+            router.push('/users/cart');
+        } else {
+            router.push('/users/signin');
+        }
     }
 
   return (
@@ -37,7 +47,7 @@ const Navbar = () => {
                 <img title='Bhalothia Assured' src="https://cdn-icons-png.flaticon.com/128/9375/9375493.png" alt="" />
             </div>
             <div className={styles.assured}>
-                <img title='Cart' src="https://cdn-icons-png.flaticon.com/128/833/833314.png" alt="" />
+                <img title='Cart' onClick={cartHandler} src="https://cdn-icons-png.flaticon.com/128/833/833314.png" alt="" />
             </div>
             <div className={styles.assured}>
                 <img src="https://cdn-icons-png.flaticon.com/128/1077/1077063.png" alt="" />

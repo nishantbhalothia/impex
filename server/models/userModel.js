@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Address = require("./userAddressSchema");
 
 const searchHistorySchema = new mongoose.Schema(
   {
@@ -69,9 +70,7 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "inactive"],
       default: "active",
     },
-    address: {
-      type: String,
-    },
+    addresses:[ Address.schema ],
     verificationCode: {
       type: String,
       expires: 300, // 10 minutes
@@ -93,6 +92,18 @@ const userSchema = new mongoose.Schema(
     },
     searchHistory: [searchHistorySchema],
     clickedProducts: [clickedProductSchema],
+    wishlist: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+    cart: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -177,6 +188,12 @@ userSchema.methods.addSearchTerm = async function (searchTerm) {
     this.clickedProducts.push({ productId });
     await this.save();
   };
+
+// add address to user
+userSchema.methods.addAddress = async function (address) {
+  this.address.push(address);
+  await this.save();
+};
 
 
 
