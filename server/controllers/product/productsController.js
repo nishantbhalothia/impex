@@ -167,6 +167,25 @@ module.exports.getProduct = async (req, res) => {
   }
 };
 
+
+// ============================================ get mulltiple products using _id in req.body ============================================
+module.exports.getProducts = async (req, res) => {  
+  try {
+    const { productIds } = req.body;
+    console.log("ProductIds @productsController getProducts:", req.body);
+
+    // const objectIds = productIds.map(id => ObjectId(id));
+    const products = await Product.find({ _id: { $in: productIds } });
+    if (!products) {  
+      return res.status(400).json({ message: "Products not found" }); 
+    }
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 // ============================================ updateProduct ============================================
 module.exports.updateProduct = async (req, res) => {
   const { id } = req.params;

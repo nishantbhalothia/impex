@@ -115,7 +115,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// fetch all products
+// ====================================== fetch all products ===============================================
 export const fetchProducts = (pageNumber) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -131,7 +131,7 @@ export const fetchProducts = (pageNumber) => async (dispatch) => {
   }
 };
 
-//  fetch one product using id
+// ====================================== fetch one product using id =======================================
 export const fetchProduct = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -145,6 +145,22 @@ export const fetchProduct = (id) => async (dispatch) => {
   }
 };
 
+
+// ======================================== fetch multiple products ========================================
+export const fetchMultipleProducts = (ids) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const response = await axiosInstance.post("/getMultiple", { ids });
+    console.log("Multiple Products response @productReducer:", response.data);
+    return response;
+  } catch (error) {
+    dispatch(setLoading(false));
+    console.error("Fetch multiple products failed:", error.message);
+  }
+};
+
+
+// ======================================== Add new product ========================================
 export const addProduct = (data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -157,6 +173,8 @@ export const addProduct = (data) => async (dispatch) => {
   }
 };
 
+
+// ======================================== Update product ========================================
 export const updateProduct = (id, data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -170,6 +188,8 @@ export const updateProduct = (id, data) => async (dispatch) => {
   }
 }
 
+
+// ======================================== Delete product ========================================
 export const deleteProduct = (id) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -181,6 +201,8 @@ export const deleteProduct = (id) => async (dispatch) => {
   }
 }
 
+
+// ======================================== Delete image of product ========================================
 export const deleteImage = (id, imageId) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
@@ -193,7 +215,7 @@ export const deleteImage = (id, imageId) => async (dispatch) => {
   }
 }
 
-// get leates products those are created within 7 days
+// ===============================  get leates products those are created within 7 days=====================
 export const fetchLatestProducts = () => async (dispatch) => {
   try {
     dispatch(setLoading(true));

@@ -2,7 +2,7 @@
 
 import styles from "@/styles/Products/ProductPage.module.css";
 import React, { useEffect, useState } from "react";
-import { fetchProduct, selectProduct } from "@/redux/reducers/productReducer";
+import { fetchProduct, selectLoading, selectProduct } from "@/redux/reducers/productReducer";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -18,12 +18,14 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 
+
 const ProductPage = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const { id } = useParams();
   const dispatch = useDispatch();
   const product = useSelector(selectProduct);
+  const loading = useSelector(selectLoading);
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -38,12 +40,18 @@ const ProductPage = () => {
     fetchProductData();
   }, [dispatch, id, router]);
 
+  const addToCartHandler = () => {  
+    console.log("Product added to cart");
+  };
+
   return (
     <div className={styles.container}>
-      {error ? (
+      {/* {error ? (
         <h1 className={styles.error}>{error}</h1>
-      ) : (
+      ) : ( */}
         <div className={styles.product}>
+          {loading && <h1 className={styles.loading}>Loading...</h1>}
+          {error && <h1 className={styles.error}>{error}</h1>}
           <div className={styles.swiperContainer}>
             <Swiper
               modules={[Navigation, Pagination, Scrollbar, Autoplay, A11y]}
@@ -67,6 +75,10 @@ const ProductPage = () => {
                 </SwiperSlide>
               ))}
             </Swiper>
+          </div>
+          <div className={styles.createOrder}>
+            <div><button onClick={addToCartHandler} title="add to cart " className={styles.buyNow}>Add to cart</button></div>
+            <div><button title="Message supplier to get more details of product" className={styles.contactSupplier}>Contact Supplier</button></div>
           </div>
           <h1 className={styles.title}>{product.name}</h1>
 
@@ -114,8 +126,14 @@ const ProductPage = () => {
               )}
             </div>
           </div>
+
+          {/* buy now and contact supplier  */}
+          <div className={styles.createOrder}>
+            <div><button onClick={addToCartHandler} title="add to cart" className={styles.buyNow}>Buy Now</button></div>
+            <div><button title="Message supplier to get more details of product" className={styles.contactSupplier}>Contact Supplier</button></div>
+          </div>
         </div>
-      )}
+      {/* )} */}
     </div>
   );
 };

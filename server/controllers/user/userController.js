@@ -269,7 +269,7 @@ module.exports.profile = async (req, res) => {
     "userController_profile req.headers.cookie : ",
     req.headers.cookie
   );
-  const user = await User.findById(req.user.id).select("-password");
+  const user = await User.findById(req.user._id).select("-password");
   res.status(200).json(user);
 };
 
@@ -282,7 +282,7 @@ module.exports.getAddresses = async (req, res) => {
   );
 
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });  
     }
@@ -304,7 +304,7 @@ module.exports.addAddress = async (req, res) => {
   );
 
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!user) {  
       return res.status(400).json({ message: "User does not exist" });
     }
@@ -320,6 +320,69 @@ module.exports.addAddress = async (req, res) => {
     
   }
 };
+
+// =========================================================== update user address ===========================================================
+module.exports.updateAddress = async (req, res) => {
+  console.log("userController_updateAddress req.body : ", req.body);
+  console.log(
+    "userController_updateAddress req.headers.cookie : ",
+    req.headers.cookie
+  );
+  const { addressId, address } = req.body;
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    if (!user.addresses.id(addressId)) {
+      return res.status(400).json({ message: "Address does not exist" });
+    }
+
+    // await User.findOneAndUpdate(
+    //   { _id: req.user._id, "addresses._id": addressId },
+    //   { $set: { "addresses.$": address } }
+    // );
+
+    user.addresses.id(addressId).set(address);
+    await user.save();
+    res.status(200).json({ message: "Address updated successfully" });
+  } catch (error) {
+    console.error("update address ERROR console", error);
+    return res.status(400).json({ message: "Address not updated" });
+  }
+};
+
+// =========================================================== delete user address ===========================================================
+module.exports.deleteAddress = async (req, res) => {
+  console.log("userController_deleteAddress req.body : ", req.body);
+  console.log(
+    "userController_deleteAddress req.headers.cookie : ",
+    req.headers.cookie
+  );
+  const { addressId } = req.body;
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    if (!user.addresses.id(addressId)) {
+      return res.status(400).json({ message: "Address does not exist" });
+    }
+    
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: { addresses: { _id: addressId } } }
+    );
+    
+    res.status(200).json({ message: "Address deleted successfully" });
+  } catch (error) {
+    console.error("delete address ERROR console", error);
+    return res.status(400).json({ message: "Address not deleted" });
+  }
+}
+
 
 // =========================================================== refresh token ===========================================================
 module.exports.refreshToken = async (req, res) => {
@@ -395,183 +458,189 @@ module.exports.refreshToken = async (req, res) => {
   }
 };
 
-// =========================================================== add search term ===========================================================
-module.exports.addSearchTerm = async (req, res) => {
-  console.log("userController_addSearchTerm req.body : ", req.body);
+
+// =========================================================== add to cart ===========================================================
+module.exports.addToCart = async (req, res) => {
+  console.log("userController_addToCart req.body : ", req.params);
   console.log(
-    "userController_addSearchTerm req.headers.cookie : ",
+    "userController_addToCart req.headers.cookie : ",
     req.headers.cookie
   );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
+  const { productId } = req.params;
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
 
-  const { searchTerm } = req.body;
-  user.addSearchTerm(searchTerm);
-  res.status(200).json({ message: "Search term added successfully" });
+    if (user.cart.includes(productId)) {
+      return res.status(400).json({ message: "Product is already in the cart" });
+    }
+
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $addToSet: { cart: productId } }
+    );
+
+    res.status(200).json({ message: "Product added to cart successfully" });
+  }
+  catch (error) {
+    console.error("add to cart ERROR console", error);
+    return res.status(400).json({ message: "Product not added to cart" });
+  }
 }
 
-// =========================================================== get search history ===========================================================
-module.exports.getSearchHistory = async (req, res) => {
-  console.log("userController_getSearchHistory req.body : ", req.body);
+// =========================================================== get cart ===========================================================
+module.exports.getCart = async (req, res) => {
+  console.log("userController_getCart req.body : ", req.body);
   console.log(
-    "userController_getSearchHistory req.headers.cookie : ",
+    "userController_getCart req.headers.cookie : ",
     req.headers.cookie
   );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    if (user.cart.length === 0) {
+      return res.status(400).json({ message: "Cart is empty" });
+    }
+    res.status(200).json(user.cart);
+  } catch (error) {
+    console.error("get cart ERROR console", error);
+    return res.status(400).json({ message: "Cart not found" });
   }
+} 
 
-  res.status(200).json(user.searchHistory);
-}
-
-// =========================================================== get search history by ID ===========================================================
-module.exports.getSearchHistoryById = async (req, res) => {
-  console.log("userController_getSearchHistoryById req.body : ", req.body);
+// =========================================================== remove from cart ===========================================================
+module.exports.removeFromCart = async (req, res) => {
+  console.log("userController_removeFromCart req.params : ", req.params);
   console.log(
-    "userController_getSearchHistoryById req.headers.cookie : ",
+    "userController_removeFromCart req.headers.cookie : ",
     req.headers.cookie
   );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
+  const { productId } = req.params;
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
 
-  const searchID = req.params.id;
-  const search = user.searchHistory.id(searchID);
-  res.status(200).json(search);
+    if (!user.cart.includes(productId)) {
+      return res.status(400).json({ message: "Product is not in the cart" });
+    }
+
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: { cart: productId } }
+    );
+
+    res.status(200).json({ message: "Product removed from cart successfully" });
+  } catch (error) {
+    console.error("remove from cart ERROR console", error);
+    return res.status(400).json({ message: "Product not removed from cart" });
+  }
 }
 
-// =========================================================== delete search history by ID ===========================================================
-module.exports.deleteSearchHistoryById = async (req, res) => {
-  console.log("userController_deleteSearchHistoryById req.body : ", req.body);
+// =========================================================== clear cart ===========================================================
+module.exports.clearCart = async (req, res) => {
+  console.log("userController_clearCart req.body : ", req.body);
   console.log(
-    "userController_deleteSearchHistoryById req.headers.cookie : ",
+    "userController_clearCart req.headers.cookie : ",
     req.headers.cookie
   );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
 
-  const searchID = req.params.id;
-  user.searchHistory.id(searchID).remove();
-  await user.save();
-  res.status(200).json({ message: "Search history deleted successfully" });
+    await User.findOneAndUpdate(
+      { _id: req.user._id },  
+      { $set: { cart: [] } }
+    );
+    
+    res.status(200).json({ message: "Cart cleared successfully" });
+  } catch (error) {
+    console.error("clear cart ERROR console", error);
+    return res.status(400).json({ message: "Cart not cleared" });
+  }
 }
 
-// =========================================================== delete search history ===========================================================
-module.exports.deleteSearchHistory = async (req, res) => {
-  console.log("userController_deleteSearchHistory req.body : ", req.body);
+
+// =========================================================== get wishlist =========================================================== 
+module.exports.getWishlist = async (req, res) => {
+  console.log("userController_getWishlist req.body : ", req.body);
   console.log(
-    "userController_deleteSearchHistory req.headers.cookie : ",
+    "userController_getWishlist req.headers.cookie : ",
     req.headers.cookie
   );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+    res.status(200).json(user.wishlist);
+  } catch (error) {
+    console.error("get wishlist ERROR console", error);
+    return res.status(400).json({ message: "Wishlist not found" });
   }
-
-  user.searchHistory = [];
-  await user.save();
-  res.status(200).json({ message: "Search history deleted successfully" });
 }
 
 
-// =========================================================== add watch history ===========================================================
-module.exports.addWatchHistory = async (req, res) => {
-  console.log("userController_addWatchHistory req.body : ", req.body);
-  console.log(
-    "userController_addWatchHistory req.headers.cookie : ",
-    req.headers.cookie
-  );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
+// =========================================================== add to wishlist ===========================================================
+module.exports.addToWishlist = async (req, res) => {
+  const { productId } = req.params;
+  
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
 
-  const { productId } = req.body;
-  user.addClickedProduct(productId);
-  res.status(200).json({ message: "Product clicked added successfully" });
+    if (user.wishlist.includes(productId)) {
+      return res.status(400).json({ message: "Product is already in the wishlist" });
+    }
+
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $addToSet: { wishlist: productId } }
+    );
+
+    res.status(200).json({ message: "Product added to wishlist successfully" });
+  } catch (error) {
+    console.error("addToWishlist ERROR:", error);
+    return res.status(500).json({ message: "Product not added to wishlist" });
+  }
 }
 
-// =========================================================== get watch history ===========================================================
-module.exports.getWatchHistory = async (req, res) => {
-  console.log("userController_getWatchHistory req.body : ", req.body);
-  console.log(
-    "userController_getWatchHistory req.headers.cookie : ",
-    req.headers.cookie
-  );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
+
+
+// =========================================================== remove from wishlist ===========================================================
+module.exports.removeFromWishlist = async (req, res) => {
+  const { productId } = req.params;
+  
+  try {
+    const user = await User.findById(req.user._id);
+    
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    if (!user.wishlist.includes(productId)) {
+      return res.status(400).json({ message: "Product is not in the wishlist" });
+    }
+
+    await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: { wishlist: productId } }
+    );
+
+    res.status(200).json({ message: "Product removed from wishlist successfully" });
+  } catch (error) {
+    console.error("removeFromWishlist ERROR:", error);
+    return res.status(500).json({ message: "Product not removed from wishlist" });
   }
-
-  res.status(200).json(user.clickedProducts);
 }
-
-// =========================================================== get watch history by ID ===========================================================
-module.exports.getWatchHistoryById = async (req, res) => {
-  console.log("userController_getWatchHistoryById req.body : ", req.body);
-  console.log(
-    "userController_getWatchHistoryById req.headers.cookie : ",
-    req.headers.cookie
-  );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
-
-  const productID = req.params.id;
-  const product = user.clickedProducts.id(productID);
-  res.status(200).json(product);
-}
-
-// =========================================================== delete watch history by ID ===========================================================
-module.exports.deleteWatchHistoryById = async (req, res) => {
-  console.log("userController_deleteWatchHistoryById req.body : ", req.body);
-  console.log(
-    "userController_deleteWatchHistoryById req.headers.cookie : ",
-    req.headers.cookie
-  );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
-
-  const productID = req.params.id;
-  user.clickedProducts.id(productID).remove();
-  await user.save();
-  res.status(200).json({ message: "Watch history deleted successfully" });
-}
-
-// =========================================================== delete watch history ===========================================================
-module.exports.deleteWatchHistory = async (req, res) => {
-  console.log("userController_deleteWatchHistory req.body : ", req.body);
-  console.log(
-    "userController_deleteWatchHistory req.headers.cookie : ",
-    req.headers.cookie
-  );
-  const userID = req.user._id || req.body.userId;
-  const user = await User.findById(userID);
-  if (!user) {
-    return res.status(400).json({ message: "User does not exist" });
-  }
-
-  user.clickedProducts = [];
-  await user.save();
-  res.status(200).json({ message: "Watch history deleted successfully" });
-}
-
-// =========================================================== end of userController.js ===========================================================

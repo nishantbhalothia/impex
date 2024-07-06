@@ -199,8 +199,92 @@ export const getLocation = () => async (dispatch) => {
       console.error("Failed to fetch country:", error.message);
     }
   };
+
+
+// =========================================================== add to cart ===========================================================
+export const addToCart = (productId) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.post(`/cart/${productId}`);
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Add to cart failed:", error.message);
+    }
+  };
   
 
+// ================================================== delete product from cart =====================================================
+export const deleteFromCart = (productId) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.delete(`/cart/${productId}`);
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Delete from cart failed:", error.message);
+    }
+  };
+
+// =========================================================== clear cart ===========================================================
+export const clearCart = () => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.delete('/cart');
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Clear cart failed:", error.message);
+    }
+  };
+
+// =========================================================== fetch cart ===========================================================
+export const fetchCart = () => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.get('/cart');
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Fetch cart failed:", error.message);
+    }
+  };
+
+// =========================================================== fetch wishlist ===========================================================
+export const fetchWishlist = () => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.get('/wishlist');
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Fetch wishlist failed:", error.message);
+    }
+  };
+
+// =========================================================== add to wishlist ===========================================================
+export const addToWishlist = (productId) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.post(`/wishlist/${productId}`);
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Add to wishlist failed:", error.message);
+    }
+  };
+
+// =========================================================== delete from wishlist ===========================================================
+export const deleteFromWishlist = (productId) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const response = await axiosInstance.delete(`/wishlist/${productId}`);
+      return response;
+    } catch (error) {
+      dispatch(setLoading(false));
+      console.error("Delete from wishlist failed:", error.message);
+    }
+  };
 
   
 
